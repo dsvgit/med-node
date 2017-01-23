@@ -12,7 +12,8 @@ var _           = require('lodash');
 
 var jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var config = require('./config'); // get our config file
-var User   = require('./app/models/user'); // get our mongoose model
+var User   = require('./app/models/user');
+var Card   = require('./app/models/card');
 
 // =======================
 // configuration =========
@@ -187,55 +188,81 @@ apiRoutes.get('/user/:id', function(req, res) {
       res.status(404).send('Not found');
       return;
     }
-    res.json(user);
+    Card.findOne({ _id: id }, function(err, card) {
+      res.json({ user: user, card: card });
+    });
   });
 });
 
 apiRoutes.post('/user', function(req, res) {
   var body = req.body;
+  var _user = body.user;
   var user = new User({
-    login: body.login,
-    password: bcrypt.hashSync(body.password, 8),
-    firstname: body.firstname,
-    lastname: body.lastname,
-    email: body.email,
-    isAdmin: body.isAdmin
+    login: _user.login,
+    password: bcrypt.hashSync(_user.password, 8),
+    firstname: _user.firstname,
+    lastname: _user.lastname,
+    email: _user.email,
+    isAdmin: _user.isAdmin
   });
 
   user.save();
+
+  var _card = body.card;
+  var card = new Card({
+    _id: user._id,
+    prot: _card.prot,
+    fats: _card.fats,
+    carb: _card.carb,
+    calories: _card.calories
+  });
+
+  card.save();
   res.json({});
 });
 
 apiRoutes.patch('/user/:id', function(req, res) {
   var id = req.params.id;
   var body = req.body;
+  var _user = body.user;
 
-  var updater = {
-    login: body.login,
-    firstname: body.firstname,
-    lastname: body.lastname,
-    email: body.email,
-    isAdmin: body.isAdmin
+  var userUpdater = {
+    login: _user.login,
+    firstname: _user.firstname,
+    lastname: _user.lastname,
+    email: _user.email,
+    isAdmin: _user.isAdmin
   };
 
-  console.log(body.password);
-  if (body.password) {
-    updater.password = bcrypt.hashSync(body.password, 8)
+  if (_user.password) {
+    userUpdater.password = bcrypt.hashSync(_user.password, 8)
   }
 
-  User.findByIdAndUpdate(id, { $set: updater }, { new: true }, function (err, user) {
+  var _card = body.card;
+  var cardUpdater = {
+    prot: _card.prot,
+    fats: _card.fats,
+    carb: _card.carb,
+    calories: _card.calories
+  };
+
+  User.findByIdAndUpdate(id, { $set: userUpdater }, { new: true }, function (err, user) {
     if (err) return handleError(err);
-    res.send(user);
+    Card.findByIdAndUpdate(id, { $set: cardUpdater }, { new: true }, function (err, card) {
+      if (err) return handleError(err);
+      res.json({ user: user, card: card });
+    });
   });
 });
 
 apiRoutes.delete('/user/:id', function(req, res) {
   var id = req.params.id;
-
-  var id = req.params.id;
   User.findOne({ _id: id }, function(err, user) {
-    user.remove();
-    res.json();
+    Card.findOne({ _id: id }, function(err, card) {
+      user && user.remove();
+      card && card.remove();
+      res.json();
+    });
   });
 });
 

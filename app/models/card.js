@@ -4,7 +4,7 @@ var Schema = mongoose.Schema;
 var CardSchema = new Schema({
   prot: Number,
   fats: Number,
-  card: Number,
+  carb: Number,
   calories: Number
 });
 
