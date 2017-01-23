@@ -176,8 +176,15 @@ apiRoutes.get('/current', function(req, res) {
 
 // route to return all users (GET http://localhost:8080/api/users)
 apiRoutes.get('/users', function(req, res) {
-  User.find({}, function(err, users) {
-    res.json(users);
+  var page = req.query.page;
+  var pageSize = 10;
+  User.paginate({}, { page: page, limit: pageSize }, function(err, result) {
+    // result.docs
+    // result.total
+    // result.limit - 10
+    // result.page - 3
+    // result.pages
+    res.json({ users: result.docs, total: result.total });
   });
 });
 
