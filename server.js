@@ -189,6 +189,7 @@ apiRoutes.get('/user/:id', function(req, res) {
       return;
     }
     Card.findOne({ _id: id }, function(err, card) {
+      if (!card) card = {};
       res.json({ user: user, card: card });
     });
   });
@@ -209,15 +210,17 @@ apiRoutes.post('/user', function(req, res) {
   user.save();
 
   var _card = body.card;
-  var card = new Card({
-    _id: user._id,
-    prot: _card.prot,
-    fats: _card.fats,
-    carb: _card.carb,
-    calories: _card.calories
-  });
+  if (_card) {
+    var card = new Card({
+      _id: user._id,
+      prot: _card.prot,
+      fats: _card.fats,
+      carb: _card.carb,
+      calories: _card.calories
+    });
 
-  card.save();
+    card.save();
+  }
   res.json({});
 });
 
@@ -239,19 +242,36 @@ apiRoutes.patch('/user/:id', function(req, res) {
   }
 
   var _card = body.card;
-  var cardUpdater = {
-    prot: _card.prot,
-    fats: _card.fats,
-    carb: _card.carb,
-    calories: _card.calories
-  };
 
   User.findByIdAndUpdate(id, { $set: userUpdater }, { new: true }, function (err, user) {
     if (err) return handleError(err);
-    Card.findByIdAndUpdate(id, { $set: cardUpdater }, { new: true }, function (err, card) {
-      if (err) return handleError(err);
-      res.json({ user: user, card: card });
-    });
+    if (_card) {
+      Card.findById(id, function(err, card) {
+        if (card) {
+          _.assign(card, {
+            prot: _card.prot,
+            fats: _card.fats,
+            carb: _card.carb,
+            calories: _card.calories
+          });
+        } else {
+          card = new Card({
+            _id: id,
+            prot: _card.prot,
+            fats: _card.fats,
+            carb: _card.carb,
+            calories: _card.calories
+          });
+        }
+
+        card.save(function (err, updatedCard) {
+          if (err) return handleError(err);
+          res.json({ user: user, card: updatedCard });
+        });
+      });
+    } else {
+      res.json({ user: user });
+    }
   });
 });
 
