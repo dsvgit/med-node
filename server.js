@@ -177,8 +177,20 @@ apiRoutes.get('/current', function(req, res) {
 // route to return all users (GET http://localhost:8080/api/users)
 apiRoutes.get('/users', function(req, res) {
   var page = req.query.page;
+  var search = req.query.search;
+  var params = {};
+  if (search) {
+    var searchRegExp = new RegExp(search, 'i');
+    params = {
+      '$or': [
+        { login: searchRegExp },
+        { firstname: searchRegExp },
+        { lastname: searchRegExp }
+      ]
+    };
+  }
   var pageSize = 10;
-  User.paginate({}, { page: page, limit: pageSize }, function(err, result) {
+  User.paginate(params, { page: page, limit: pageSize, sort: { login: 1 } }, function(err, result) {
     // result.docs
     // result.total
     // result.limit - 10
