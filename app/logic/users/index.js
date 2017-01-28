@@ -2,7 +2,6 @@ var _ = require('lodash');
 var bcrypt = require('bcryptjs');
 
 var User = require('../../models/user');
-var cardsManager = require('../cards');
 
 
 function makePassword(password) {
@@ -19,30 +18,6 @@ function getUserById(params) {
   var id = params.id;
 
   return User.findById(id);
-}
-
-function getUserEditor(params) {
-  var id = params.id;
-
-  var $result = {};
-  return getUserById({ id: id })
-  .then(function(_user) {
-    if (!_user) {
-      return Promise.reject();
-    }
-
-    $result.user = _user;
-    return cardsManager.getCardById({ id: id });
-  })
-  .then(function(_card) {
-    var card = {};
-    if (_card) {
-      card = _card;
-    }
-
-    $result.card = card;
-    return $result;
-  });
 }
 
 function save(params) {
@@ -122,7 +97,6 @@ module.exports = {
   getUserByLogin: getUserByLogin,
   getUsersOverview: getUsersOverview,
   getUserById: getUserById,
-  getUserEditor: getUserEditor,
   save: save,
   deleteUser: deleteUser
 }

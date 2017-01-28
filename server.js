@@ -24,6 +24,7 @@ app.use(cors());
 app.use('/api/v0', router);
 require('./app/api/authentication');
 require('./app/api/users');
+require('./app/api/cards');
 
 app.listen(port);
 console.log('Magic happens at http://localhost:' + port);

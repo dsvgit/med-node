@@ -1,7 +1,6 @@
-var User   = require('../../models/user');
-var Card   = require('../../models/card');
 var router = require('../router');
 var usersManager = require('../../logic/users');
+var editorManager = require('../../logic/editor');
 
 router.get('/current', function(req, res) {
   var login = req.currentUser.login;
@@ -29,7 +28,7 @@ router.get('/users', function(req, res) {
 router.get('/user/:id', function(req, res) {
   var id = req.params.id;
 
-  usersManager.getUserEditor({ id: id })
+  editorManager.getUserEditor({ id: id })
   .then(function(_result) {
     return res.json({ user: _result.user, card: _result.card });
   })
@@ -43,8 +42,8 @@ router.post('/user', function(req, res) {
   usersManager.save({
     user: user
   })
-  .then(function() {
-    return res.json({});
+  .then(function(user) {
+    return res.json({ user: user });
   })
   .catch(function() {
     return res.status(500).send('Can\'t save');
@@ -59,8 +58,8 @@ router.patch('/user/:id', function(req, res) {
     id: id,
     user: user
   })
-  .then(function() {
-    return res.json({});
+  .then(function(user) {
+    return res.json({ user: user });
   })
   .catch(function() {
     return res.status(500).send('Can\'t patch');
