@@ -2,7 +2,12 @@ var _ = require('lodash');
 var bcrypt = require('bcryptjs');
 
 var User = require('../../models/user');
+var validator = require('./validator');
 
+
+function makeErrorMessage(error) {
+  return _.get(error, 'details.0.message');
+}
 
 function makePassword(password) {
   return bcrypt.hashSync(password, 8)
@@ -35,6 +40,11 @@ function add(params) {
   var user = new User(_.assign({}, _user));
   user.password = makePassword(_user.password);
 
+  var validation = validator.validate(user);
+  if (validation.error) {
+    return Promise.reject();
+  }
+
   return user.save();
 }
 
@@ -46,6 +56,12 @@ function update(params) {
   .then(function(user) {
     _.assign(user, _user);
     _user.password && (user.password = makePassword(_user.password));
+
+    var validation = validator.validate(user);
+    var error = validation.error;
+    if (error) {
+      return Promise.reject({ message: makeErrorMessage(error) });
+    }
 
     return user.save();
   });

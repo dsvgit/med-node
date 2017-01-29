@@ -3,6 +3,10 @@ var cardsManager = require('../../logic/cards');
 
 
 router.post('/card/:id', function(req, res) {
+  if (!req.currentUser.isAdmin) {
+    return res.status(403).send('You don\'t have permissions');
+  }
+
   var id = req.params.id;
   var card = req.body.card;
 

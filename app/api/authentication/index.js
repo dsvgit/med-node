@@ -70,7 +70,8 @@ router.use(function(req, res, next) {
     _.assign(req, {
       decoded: decoded,
       currentUser: {
-        login: decoded._doc.login
+        login: decoded._doc.login,
+        isAdmin: decoded._doc.isAdmin
       }
     });
     next();
