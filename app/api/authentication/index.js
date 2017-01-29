@@ -71,6 +71,7 @@ router.use(function(req, res, next) {
       decoded: decoded,
       currentUser: {
         login: decoded._doc.login,
+        id: decoded._doc._id,
         isAdmin: decoded._doc.isAdmin
       }
     });
