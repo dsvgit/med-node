@@ -5,9 +5,9 @@ var usersManager = require('../../logic/users');
 var editorManager = require('../../logic/editor');
 
 router.get('/current', function(req, res) {
-  var login = req.currentUser.login;
+  var id = req.currentUser.id;
 
-  usersManager.getUserByLogin({login: login})
+  usersManager.getUserById({ id: id })
   .then(function(user) {
     res.json(user);
   });
@@ -32,6 +32,23 @@ router.post('/profile', function(req, res) {
       return res.status(500).send(error);
     }
     return res.status(500).send('Can\'t save');
+  });
+});
+
+router.get('/is-login-available/:id', function(req, res) {
+  var login = req.query.login;
+  var id = req.params.id;
+
+  usersManager.getUserByLogin({
+    login: login
+  })
+  .then(function(user) {
+    if (user && user._id != id) {
+      res.json(false);
+      return;
+    }
+
+    res.json(true);
   });
 });
 
