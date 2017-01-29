@@ -11,6 +11,7 @@
     "lodash": "^4.17.4",
     "mongoose": "^4.7.7",
     "mongoose-paginate": "^5.0.3",
-    "morgan": "^1.7.0"
+    "morgan": "^1.7.0",
+    "requester": "^0.1.22"
   }
 }

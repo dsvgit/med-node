@@ -41,8 +41,9 @@ function add(params) {
   user.password = makePassword(_user.password);
 
   var validation = validator.validate(user);
-  if (validation.error) {
-    return Promise.reject();
+  var error = validation.error;
+  if (error) {
+    return Promise.reject({ message: makeErrorMessage(error) });
   }
 
   return user.save();

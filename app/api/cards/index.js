@@ -17,7 +17,10 @@ router.post('/card/:id', function(req, res) {
   .then(function() {
     return res.json({});
   })
-  .catch(function() {
-    return res.status(500).send('Can\'t post');
+  .catch(function(error) {
+    if (error) {
+      return res.status(500).send(error);
+    }
+    return res.status(500).send('Can\'t save');
   });
 });

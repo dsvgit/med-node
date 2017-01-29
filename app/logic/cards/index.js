@@ -2,7 +2,12 @@ var _ = require('lodash');
 
 var Card = require('../../models/card');
 var usersManager = require('../users');
+var validator = require('./validator');
 
+
+function makeErrorMessage(error) {
+  return _.get(error, 'details.0.message');
+}
 
 function getCardById(params) {
   var id = params.id;
@@ -39,6 +44,12 @@ function add(params) {
   var card = new Card(_.assign({}, _card, {
     userId: userId
   }));
+
+  var validation = validator.validate(card);
+  var error = validation.error;
+  if (error) {
+    return Promise.reject({ message: makeErrorMessage(error) });
+  }
 
   return card.save();
 }
