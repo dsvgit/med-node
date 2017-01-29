@@ -1,3 +1,5 @@
+var _ = require('lodash');
+
 var router = require('../router');
 var usersManager = require('../../logic/users');
 var editorManager = require('../../logic/editor');
@@ -8,6 +10,28 @@ router.get('/current', function(req, res) {
   usersManager.getUserByLogin({login: login})
   .then(function(user) {
     res.json(user);
+  });
+});
+
+router.post('/profile', function(req, res) {
+  var id = req.currentUser.id;
+  var _user = req.body.user;
+
+  var user = _.assign({}, _user);
+  if (user.isAdmin) { delete user.isAdmin; }
+
+  usersManager.save({
+    id: id,
+    user: user
+  })
+  .then(function(user) {
+    return res.json({ user: user });
+  })
+  .catch(function(error) {
+    if (error) {
+      return res.status(500).send(error);
+    }
+    return res.status(500).send('Can\'t save');
   });
 });
 
