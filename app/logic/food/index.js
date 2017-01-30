@@ -66,6 +66,36 @@ function deleteFood(params) {
   });
 }
 
+function getAvailableFoods(params) {
+  var search = params.search;
+
+  var filter = {};
+  if (search) {
+    var searchRegExp = new RegExp(search, 'i');
+    filter = {
+      '$or': [
+        { title: searchRegExp }
+      ]
+    };
+  }
+
+  console.log(filter);
+  return Food.paginate(filter, {
+    page: 1,
+    limit: 30,
+    sort: {
+      title: 1
+    }
+  })
+  .then(function(_result) {
+    var result = {
+      foods: _result.docs,
+      total: _result.total
+    }
+    return result;
+  });
+}
+
 function getFoodsOverview(params) {
   var page = params.page;
   var search = params.search;
@@ -101,5 +131,6 @@ module.exports = {
   getFoodsOverview: getFoodsOverview,
   getFoodById: getFoodById,
   save: save,
-  deleteFood: deleteFood
+  deleteFood: deleteFood,
+  getAvailableFoods: getAvailableFoods
 }
