@@ -1,11 +1,12 @@
 var Joi = require('../../services/joi');
 
+var max = 999999;
 
 var schema = Joi.object().keys({
-  prot: Joi.number().min(0).max(100).required(),
-  fats: Joi.number().min(0).max(100).required(),
-  carb: Joi.number().min(0).max(100).required(),
-  calories: Joi.number().min(0).max(1000).required()
+  prot: Joi.number().min(0).max(max).required(),
+  fats: Joi.number().min(0).max(max).required(),
+  carb: Joi.number().min(0).max(max).required(),
+  calories: Joi.number().min(0).max(max).required()
 });
 
 function validate(user) {
