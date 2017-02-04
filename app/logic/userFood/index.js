@@ -113,9 +113,39 @@ function getFoodsOverview(params) {
   });
 }
 
+function getAvailableFoods(params) {
+  var userId = params.userId;
+  var search = params.search;
+
+  var filter = {};
+  if (search) {
+    var searchRegExp = new RegExp(search, 'i');
+    filter = { title: searchRegExp };
+  }
+  filter = _.assign({}, filter, {
+    userId: userId
+  });
+
+  return UserFood.paginate(filter, {
+    page: 1,
+    limit: 30,
+    sort: {
+      title: 1
+    }
+  })
+  .then(function(_result) {
+    var result = {
+      foods: _result.docs,
+      total: _result.total
+    }
+    return result;
+  });
+}
+
 module.exports = {
   getFoodsOverview: getFoodsOverview,
   getFoodById: getFoodById,
   save: save,
-  deleteFood: deleteFood
+  deleteFood: deleteFood,
+  getAvailableFoods: getAvailableFoods
 }
