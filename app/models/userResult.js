@@ -14,7 +14,8 @@ var UserResultSchema = new Schema({
     calories: Number,
     amount: Number
   }],
-  updated: Date
+  updated: Date,
+  card: {}
 });
 
 module.exports = mongoose.model('UserResult', UserResultSchema);

@@ -67,13 +67,24 @@ function saveResults(params) {
     return Promise.reject({ message: 'addedFoods must be an array'});
   }
 
-  var userResult = new UserResult({
-    userId: userId,
-    addedFoods: addedFoods,
-    updated: now
-  });
+  return cardsManager.getActualCard({
+    userId: userId
+  })
+  .then(function(_card) {
+    var card = {};
+    if (_card) {
+      card = _card;
+    }
 
-  return userResult.save();
+    var userResult = new UserResult({
+      userId: userId,
+      addedFoods: addedFoods,
+      updated: now,
+      card: card
+    });
+
+    return userResult.save();
+  });
 }
 
 module.exports = {

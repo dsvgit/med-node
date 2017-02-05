@@ -25,6 +25,7 @@ app.use('/api/v0', router);
 require('./app/api/authentication');
 require('./app/api/users');
 require('./app/api/calculator');
+require('./app/api/statistics');
 require('./app/api/food');
 require('./app/api/userFood');
 require('./app/api/cards');
