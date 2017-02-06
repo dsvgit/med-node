@@ -7,7 +7,8 @@ var schema = Joi.object().keys({
   lastname: Joi.string().person_name().required(),
   password: Joi.string().required(),
   email: Joi.string().email().required(),
-  isAdmin: Joi.boolean().required()
+  isAdmin: Joi.boolean().required(),
+  timezone: Joi.number().min(-12).max(12).required()
 });
 
 function validate(user) {

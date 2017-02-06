@@ -48,14 +48,28 @@ function getAvailableFoods(params) {
 
 function getResults(params) {
   var userId = params.userId;
-  var now = new Date();
-  var start = new Date(now.setHours(0,0,0,0));
-  var end = new Date(now.setHours(23,59,59,999));
-  console.log(now);
-  console.log(start);
-  console.log(end);
+  var _now = new Date();
 
-  return UserResult.findOne({ userId: userId, updated: { $gte: start, $lt: end } }).sort({ updated: -1 });
+  return usersManager.getUserById({ id: userId })
+  .then(function(user) {
+    if (!user) {
+      return Promise.reject();
+    }
+
+    var offset = _now.getTimezoneOffset()*60000;
+    var tz = user.timezone || 0;
+    var userOffset = tz*60*60000;
+    var now = new Date(_now.getTime()-offset-userOffset);
+
+
+    var start = new Date(now.setHours(0,0,0,0));
+    var end = new Date(now.setHours(23,59,59,999));
+    console.log(start);
+    console.log(end);
+
+
+    return UserResult.findOne({ userId: userId, updated: { $gte: start, $lt: end } }).sort({ updated: -1 });
+  });
 }
 
 function saveResults(params) {

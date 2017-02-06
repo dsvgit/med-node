@@ -9,7 +9,8 @@ var UserSchema = new Schema({
   lastname: String,
   password: String,
   email: String,
-  isAdmin: Boolean
+  isAdmin: Boolean,
+  timezone: { type: Number, default: 0 }
 });
 
 UserSchema.plugin(mongoosePaginate);
