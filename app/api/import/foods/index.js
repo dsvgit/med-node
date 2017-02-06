@@ -1,7 +1,7 @@
 var Requester = require('requester');
 var requester = new Requester({
   debug: 1,
-  timeout: 10000
+  timeout: 60000
 });
 
 var router = require('../../router');
